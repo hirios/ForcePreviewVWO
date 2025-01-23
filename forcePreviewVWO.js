@@ -1,14 +1,23 @@
+function obterTestes_VWO(nome_do_teste = false) {    
+    const listaTestes = [];
 
-function obterIdTeste_VWO(nome_do_teste) {
-    if (typeof window._vwo_exp != 'undefined') {
+    if (typeof window._vwo_exp !== 'undefined') {
         for (const testId in window._vwo_exp) {
-            if (window._vwo_exp[testId].name === nome_do_teste) {
+            let expName = window._vwo_exp[testId].name;
+            expName = expName.replace('\n', '').replace('\n\n', '');
+
+            if (nome_do_teste && expName === nome_do_teste.trim()) {
                 return testId;
+            } else {
+                listaTestes.push(expName);
             }
         }
+
+        return listaTestes;
     }
     return null; 
 }
+
 
 function obterVariantes_VWO(idTesteVWO) {
     idTesteVWO = +idTesteVWO;
@@ -22,11 +31,13 @@ function obterVariantes_VWO(idTesteVWO) {
     return listaVariante.join("\n\n"); 
 }
 
+
 function obterCookie(cookieNome) {
     let value = "; " + document.cookie;
     let parts = value.split("; " + cookieNome + "=");
     if (parts.length == 2) return parts.pop().split(";").shift();
 }
+
 
 function atualizarCookie(nome, novoValor, dias) {
     const cookies = document.cookie.split(";").reduce((acc, cookie) => {
@@ -49,8 +60,11 @@ function atualizarCookie(nome, novoValor, dias) {
     }
 }
 
-var nomeDoTesteVWO = prompt('Nome do teste').trim();
-var idTesteVWO = obterIdTeste_VWO(nomeDoTesteVWO);
+
+var listaTestesVWO = obterTestes_VWO();
+var promptCustomizadoVWO = listaTestesVWO.map((i, index)=> i + `   |   Index: ${index + 1}`).join('\n\n');
+var nomeDoTesteVWO = listaTestesVWO[+prompt('Selecione o index do teste:\n\n' + promptCustomizadoVWO) - 1];
+var idTesteVWO = obterTestes_VWO(nomeDoTesteVWO);
 var variantesVWO = obterVariantes_VWO(idTesteVWO);
 var indexVarianteVWO = prompt('Escolha o index que deseja previsualizar:\n\n' + variantesVWO);
 atualizarCookie(`_vis_opt_exp_${idTesteVWO}_combi`, indexVarianteVWO, 100); 
