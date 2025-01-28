@@ -39,7 +39,17 @@ function obterCookie(cookieNome) {
 }
 
 
+function excluirCookie(nome) {
+    const cookies = document.cookie.split(";").map(cookie => cookie.trim().split("=")[0]);
+    
+    if (cookies.includes(nome)) {
+        document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+}
+
+
 function atualizarCookie(nome, novoValor, dias) {
+    excluirCookie(nome.replace('combi', 'exclude'));
     const cookies = document.cookie.split(";").reduce((acc, cookie) => {
         const [key, value] = cookie.split("=").map(part => part.trim());
         acc[key] = value;
