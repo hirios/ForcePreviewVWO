@@ -40,10 +40,22 @@ function obterCookie(cookieNome) {
 
 
 function excluirCookie(nome) {
-    const cookies = document.cookie.split(";").map(cookie => cookie.trim().split("=")[0]);
-    
-    if (cookies.includes(nome)) {
-        document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    var cookies = document.cookie.split("; ");
+    for (var c = 0; c < cookies.length; c++) {
+        var d = window.location.hostname.split(".");
+        while (d.length > 0) {
+            var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
+            if (cookieBase.includes(nome)) {
+                var p = location.pathname.split('/');
+                console.log(p);
+                document.cookie = cookieBase + '/';
+                while (p.length > 0) {
+                    document.cookie = cookieBase + p.join('/');
+                    p.pop();
+                };
+            }
+            d.shift();
+        }
     }
 }
 
